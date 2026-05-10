@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.equipment.ui.controller.LabManagerDashboardController"
+      styleClass="dashboard-root"
+      stylesheets="@../css/style.css"
+      prefWidth="1200" prefHeight="760">
+
+    <!-- ══ SIDEBAR ══ -->
+    <VBox styleClass="sidebar">
+        <VBox styleClass="sidebar-header" spacing="6">
+            <Label text="Operix" styleClass="sidebar-logo"/>
+            <Label text="LAB MANAGER" styleClass="sidebar-role-badge"/>
+        </VBox>
+        <Pane prefHeight="12"/>
+        <Button text="📋  Booking Requests"    styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showBookings"/>
+        <Button text="🖥️  Equipment Monitor"   styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showEquipment"/>
+        <Button text="📊  Reports"              styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showReports"/>
+        <Button text="🔧  Assign Tasks"         styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showTasks"/>
+        <Pane VBox.vgrow="ALWAYS"/>
+        <Pane styleClass="sidebar-divider"/>
+        <VBox styleClass="sidebar-user-panel" spacing="4">
+            <Label fx:id="welcomeLabel" styleClass="sidebar-username"/>
+            <Button text="Log Out" styleClass="btn-logout" onAction="#handleLogout"/>
+        </VBox>
+    </VBox>
+
+    <!-- ══ CONTENT ══ -->
+    <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+        <HBox styleClass="content-header" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Lab Manager Dashboard" styleClass="content-title"/>
+                <Label text="Manage bookings, equipment and maintenance tasks" styleClass="content-subtitle"/>
+            </VBox>
+        </HBox>
+
+        <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
+                    style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox style="-fx-padding:28;" spacing="0">
+
+                <!-- ── UC01: Pending Bookings ── -->
+                <VBox fx:id="panelBookings" spacing="14">
+                    <Label text="Booking Requests" styleClass="section-title"/>
+                    <Label text="Review and approve or reject pending teacher booking requests" styleClass="section-desc"/>
+                    <TableView fx:id="pendingTable" prefHeight="300" maxWidth="Infinity"
+                               onMouseClicked="#handleSelectTask">
+                        <columns>
+                            <TableColumn fx:id="colBkId"        text="#"          prefWidth="50"/>
+                            <TableColumn fx:id="colBkTeacher"   text="Teacher"    prefWidth="140"/>
+                            <TableColumn fx:id="colBkEquipment" text="Equipment"  prefWidth="150"/>
+                            <TableColumn fx:id="colBkDate"      text="Date"       prefWidth="100"/>
+                            <TableColumn fx:id="colBkTime"      text="Time"       prefWidth="130"/>
+                            <TableColumn fx:id="colBkPurpose"   text="Purpose"    prefWidth="160"/>
+                            <TableColumn fx:id="colBkStatus"    text="Status"     prefWidth="90"/>
+                        </columns>
+                        <placeholder><Label text="No pending bookings" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                    <HBox spacing="12">
+                        <Button text="✓  Approve Selected"  styleClass="btn-success" onAction="#handleApprove"/>
+                        <Button text="✗  Reject Selected"   styleClass="btn-danger"  onAction="#handleReject"/>
+                    </HBox>
+                </VBox>
+
+                <!-- ── UC02 + UC03: Equipment ── -->
+                <VBox fx:id="panelEquipment" spacing="14" visible="false" managed="false">
+                    <Label text="Equipment Monitor" styleClass="section-title"/>
+                    <TableView fx:id="equipTable" prefHeight="260" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="colEqId"       text="ID"       prefWidth="55"/>
+                            <TableColumn fx:id="colEqName"     text="Name"     prefWidth="200"/>
+                            <TableColumn fx:id="colEqCategory" text="Category" prefWidth="140"/>
+                            <TableColumn fx:id="colEqStatus"   text="Status"   prefWidth="130"/>
+                            <TableColumn fx:id="colEqLocation" text="Location" prefWidth="140"/>
+                        </columns>
+                    </TableView>
+
+                    <Separator/>
+                    <Label text="Update Equipment Status" styleClass="section-title"/>
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <VBox spacing="6">
+                            <Label text="EQUIPMENT ID" styleClass="field-label"/>
+                            <TextField fx:id="updateEqIdField" promptText="e.g. 5" styleClass="input-field" prefWidth="130"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text="NEW STATUS" styleClass="field-label"/>
+                            <ComboBox fx:id="updateStatusBox" styleClass="combo-box" prefWidth="180"/>
+                        </VBox>
+                        <VBox spacing="6">
+                            <Label text=" " styleClass="field-label"/>
+                            <Button text="Update" styleClass="btn-accent" onAction="#handleUpdateStatus"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="updateStatusLabel" styleClass="section-desc"/>
+                </VBox>
+
+                <!-- ── UC04: Reports ── -->
+                <VBox fx:id="panelReports" spacing="14" visible="false" managed="false">
+                    <Label text="Reports &amp; Analytics" styleClass="section-title"/>
+
+                    <!-- Stat cards row -->
+                    <HBox spacing="14">
+                        <VBox styleClass="stat-card" spacing="4">
+                            <Label fx:id="totalBookingsLabel" text="—" styleClass="stat-number"/>
+                            <Label text="Total Bookings" styleClass="stat-label"/>
+                        </VBox>
+                        <VBox styleClass="stat-card" spacing="4">
+                            <Label fx:id="unresolvedFaultsLabel" text="—" styleClass="stat-number"
+                                   style="-fx-text-fill: #e74c3c;"/>
+                            <Label text="Unresolved Faults" styleClass="stat-label"/>
+                        </VBox>
+                    </HBox>
+
+                    <Label text="Unresolved Fault Reports" styleClass="section-title"/>
+                    <TableView fx:id="faultsTable" prefHeight="280" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="colFaultId"     text="#"           prefWidth="55"/>
+                            <TableColumn fx:id="colFaultEquip"  text="Equipment"   prefWidth="180"/>
+                            <TableColumn fx:id="colFaultDesc"   text="Description" prefWidth="260"/>
+                            <TableColumn fx:id="colFaultSev"    text="Severity"    prefWidth="100"/>
+                            <TableColumn fx:id="colFaultStatus" text="Status"      prefWidth="110"/>
+                        </columns>
+                        <placeholder><Label text="No unresolved faults" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- ── UC05: Assign Task ── -->
+                <VBox fx:id="panelTasks" spacing="14" visible="false" managed="false">
+                    <Label text="Assign Maintenance Task" styleClass="section-title"/>
+                    <Label text="Assign a reported fault to a technician for repair" styleClass="section-desc"/>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="FAULT ID" styleClass="field-label"/>
+                            <TextField fx:id="taskFaultIdField" promptText="e.g. 3" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="PRIORITY" styleClass="field-label"/>
+                            <ComboBox fx:id="taskPriorityBox" styleClass="combo-box" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="6">
+                        <Label text="ASSIGN TO TECHNICIAN" styleClass="field-label"/>
+                        <ComboBox fx:id="taskTechnicianBox" styleClass="combo-box" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox spacing="6">
+                        <Label text="INSTRUCTIONS / NOTES" styleClass="field-label"/>
+                        <TextField fx:id="taskNotesField" promptText="Optional notes for the technician" styleClass="input-field"/>
+                    </VBox>
+                    <Button text="Assign Task" styleClass="btn-accent" onAction="#handleAssignTask"/>
+                    <Label fx:id="taskStatusLabel" styleClass="section-desc"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar">
+            <Label fx:id="statusBar" text="Ready" styleClass="status-label"/>
+        </HBox>
+    </VBox>
+</HBox>

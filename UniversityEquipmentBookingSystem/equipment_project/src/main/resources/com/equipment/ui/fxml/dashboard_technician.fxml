@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.equipment.ui.controller.TechnicianDashboardController"
+      styleClass="dashboard-root"
+      stylesheets="@../css/style.css"
+      prefWidth="1200" prefHeight="760">
+
+    <!-- ══ SIDEBAR ══ -->
+    <VBox styleClass="sidebar">
+        <VBox styleClass="sidebar-header" spacing="6">
+            <Label text="Operix" styleClass="sidebar-logo"/>
+            <Label text="TECHNICIAN" styleClass="sidebar-role-badge"/>
+        </VBox>
+        <Pane prefHeight="12"/>
+        <Button text="🔧  My Tasks"            styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showTasks"/>
+        <Button text="🔄  Update Repair Status" styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showUpdate"/>
+        <Button text="🔍  Fault Details"        styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showFaultDetail"/>
+        <Button text="📜  Maintenance History"  styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showHistory"/>
+        <Pane VBox.vgrow="ALWAYS"/>
+        <Pane styleClass="sidebar-divider"/>
+        <VBox styleClass="sidebar-user-panel" spacing="4">
+            <Label fx:id="welcomeLabel" styleClass="sidebar-username"/>
+            <Button text="Log Out" styleClass="btn-logout" onAction="#handleLogout"/>
+        </VBox>
+    </VBox>
+
+    <!-- ══ CONTENT ══ -->
+    <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+        <HBox styleClass="content-header" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Technician Dashboard" styleClass="content-title"/>
+                <Label text="View tasks, update repair status and resolve faults" styleClass="content-subtitle"/>
+            </VBox>
+        </HBox>
+
+        <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true"
+                    style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox style="-fx-padding:28;" spacing="0">
+
+                <!-- ── UC01: My Tasks ── -->
+                <VBox fx:id="panelTasks" spacing="14">
+                    <Label text="My Assigned Tasks" styleClass="section-title"/>
+                    <Label text="Click a row then use Update or Resolve buttons below" styleClass="section-desc"/>
+                    <TableView fx:id="tasksTable" prefHeight="300" maxWidth="Infinity"
+                               onMouseClicked="#handleSelectTask">
+                        <columns>
+                            <TableColumn fx:id="colTaskId"       text="#"          prefWidth="55"/>
+                            <TableColumn fx:id="colTaskEquip"    text="Equipment"  prefWidth="180"/>
+                            <TableColumn fx:id="colTaskDesc"     text="Fault"      prefWidth="240"/>
+                            <TableColumn fx:id="colTaskPriority" text="Priority"   prefWidth="90"/>
+                            <TableColumn fx:id="colTaskStatus"   text="Status"     prefWidth="110"/>
+                            <TableColumn fx:id="colTaskAssigned" text="Assigned"   prefWidth="100"/>
+                        </columns>
+                        <placeholder><Label text="No tasks assigned yet" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                    <HBox spacing="12">
+                        <Button text="🔄  Update Status"  styleClass="btn-outline" onAction="#showUpdate"/>
+                        <Button text="✓  Mark Resolved"  styleClass="btn-success" onAction="#showUpdate"/>
+                    </HBox>
+                </VBox>
+
+                <!-- ── UC02 + UC03: Update / Resolve Panel ── -->
+                <VBox fx:id="panelUpdate" spacing="20" visible="false" managed="false">
+
+                    <!-- UC02 -->
+                    <VBox styleClass="card" spacing="14">
+                        <Label text="Update Repair Status" styleClass="section-title"/>
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <VBox spacing="6">
+                                <Label text="TASK ID" styleClass="field-label"/>
+                                <TextField fx:id="updateTaskIdField" promptText="Task #" styleClass="input-field" prefWidth="110"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="NEW STATUS" styleClass="field-label"/>
+                                <ComboBox fx:id="updateStatusBox" styleClass="combo-box" prefWidth="180"/>
+                            </VBox>
+                        </HBox>
+                        <VBox spacing="6">
+                            <Label text="NOTES / PROGRESS UPDATE" styleClass="field-label"/>
+                            <TextField fx:id="updateNotesField" promptText="Optional notes..." styleClass="input-field"/>
+                        </VBox>
+                        <Button text="Update Status" styleClass="btn-accent" onAction="#handleUpdateStatus"/>
+                        <Label fx:id="updateStatusLabel" styleClass="section-desc"/>
+                    </VBox>
+
+                    <!-- UC03 -->
+                    <VBox styleClass="card" spacing="14">
+                        <Label text="Mark Fault as Resolved" styleClass="section-title"/>
+                        <Label text="This will complete the task and restore equipment to AVAILABLE" styleClass="section-desc"/>
+                        <HBox spacing="14" alignment="CENTER_LEFT">
+                            <VBox spacing="6">
+                                <Label text="TASK ID" styleClass="field-label"/>
+                                <TextField fx:id="resolveTaskIdField" promptText="Task #" styleClass="input-field" prefWidth="110"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text=" " styleClass="field-label"/>
+                                <Button text="✓  Mark as Resolved" styleClass="btn-success" onAction="#handleResolve"/>
+                            </VBox>
+                        </HBox>
+                        <Label fx:id="resolveStatusLabel" styleClass="section-desc"/>
+                    </VBox>
+                </VBox>
+
+                <!-- ── UC04: Fault Details ── -->
+                <VBox fx:id="panelFaultDetail" spacing="14" visible="false" managed="false">
+                    <Label text="Fault Details" styleClass="section-title"/>
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <TextField fx:id="detailFaultIdField" promptText="Fault ID..." styleClass="input-field" prefWidth="150"/>
+                        <Button text="Load Details" styleClass="btn-accent" onAction="#handleLoadFaultDetail"/>
+                    </HBox>
+
+                    <!-- Detail card -->
+                    <VBox styleClass="card" spacing="12">
+                        <HBox spacing="0">
+                            <Label text="Equipment"  styleClass="detail-key"/>
+                            <Label fx:id="detailEquipLabel" text="—" styleClass="detail-value"/>
+                        </HBox>
+                        <HBox spacing="0">
+                            <Label text="Description" styleClass="detail-key"/>
+                            <Label fx:id="detailDescLabel" text="—" styleClass="detail-value" wrapText="true" maxWidth="500"/>
+                        </HBox>
+                        <HBox spacing="0">
+                            <Label text="Severity"   styleClass="detail-key"/>
+                            <Label fx:id="detailSevLabel" text="—" styleClass="detail-value"/>
+                        </HBox>
+                        <HBox spacing="0">
+                            <Label text="Status"     styleClass="detail-key"/>
+                            <Label fx:id="detailStatusLabel" text="—" styleClass="detail-value"/>
+                        </HBox>
+                        <HBox spacing="0">
+                            <Label text="Reported By" styleClass="detail-key"/>
+                            <Label fx:id="detailReporterLabel" text="—" styleClass="detail-value"/>
+                        </HBox>
+                        <HBox spacing="0">
+                            <Label text="Date"       styleClass="detail-key"/>
+                            <Label fx:id="detailDateLabel" text="—" styleClass="detail-value"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- ── UC05: Maintenance History ── -->
+                <VBox fx:id="panelHistory" spacing="14" visible="false" managed="false">
+                    <Label text="Maintenance History" styleClass="section-title"/>
+                    <Label text="View all completed repair tasks for a piece of equipment" styleClass="section-desc"/>
+                    <HBox spacing="14" alignment="CENTER_LEFT">
+                        <TextField fx:id="historyEqIdField" promptText="Equipment ID..." styleClass="input-field" prefWidth="160"/>
+                        <Button text="Load History" styleClass="btn-accent" onAction="#handleLoadHistory"/>
+                    </HBox>
+                    <TableView fx:id="historyTable" prefHeight="280" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="colHstTaskId"  text="#"          prefWidth="55"/>
+                            <TableColumn fx:id="colHstEquip"   text="Equipment"  prefWidth="180"/>
+                            <TableColumn fx:id="colHstDesc"    text="Fault"      prefWidth="240"/>
+                            <TableColumn fx:id="colHstStatus"  text="Status"     prefWidth="110"/>
+                            <TableColumn fx:id="colHstCompleted" text="Completed" prefWidth="110"/>
+                        </columns>
+                        <placeholder><Label text="Enter equipment ID and click Load History" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="status-bar">
+            <Label fx:id="statusBar" text="Ready" styleClass="status-label"/>
+        </HBox>
+    </VBox>
+</HBox>

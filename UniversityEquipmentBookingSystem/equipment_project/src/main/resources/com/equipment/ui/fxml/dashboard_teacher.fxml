@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.equipment.ui.controller.TeacherDashboardController"
+      styleClass="dashboard-root"
+      stylesheets="@../css/style.css"
+      prefWidth="1200" prefHeight="760">
+
+    <!-- ══════════════════════════════════════════
+         SIDEBAR
+         ══════════════════════════════════════════ -->
+    <VBox styleClass="sidebar">
+
+        <!-- Logo -->
+        <VBox styleClass="sidebar-header" spacing="6">
+            <Label text="Operix" styleClass="sidebar-logo"/>
+            <Label text="TEACHER" styleClass="sidebar-role-badge"/>
+        </VBox>
+
+        <Pane prefHeight="12"/>
+
+        <!-- Nav -->
+        <Button text="🔍  Search Equipment"   styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showSearch"/>
+        <Button text="📅  Book Equipment"      styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showBook"/>
+        <Button text="📋  My Bookings"         styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showBookings"/>
+        <Button text="⚠️  Report Fault"        styleClass="sidebar-nav-btn" maxWidth="Infinity" onAction="#showFault"/>
+
+        <Pane VBox.vgrow="ALWAYS"/>
+        <Pane styleClass="sidebar-divider"/>
+
+        <!-- User panel -->
+        <VBox styleClass="sidebar-user-panel" spacing="4">
+            <Label fx:id="welcomeLabel" styleClass="sidebar-username"/>
+            <Button text="Log Out" styleClass="btn-logout" onAction="#handleLogout"/>
+        </VBox>
+    </VBox>
+
+    <!-- ══════════════════════════════════════════
+         MAIN CONTENT
+         ══════════════════════════════════════════ -->
+    <VBox HBox.hgrow="ALWAYS" styleClass="content-area">
+
+        <!-- Header -->
+        <HBox styleClass="content-header" alignment="CENTER_LEFT" spacing="12">
+            <VBox spacing="2">
+                <Label text="Teacher Dashboard" styleClass="content-title"/>
+                <Label text="Search, book equipment and report faults" styleClass="content-subtitle"/>
+            </VBox>
+        </HBox>
+
+        <!-- Scrollable panels -->
+        <ScrollPane HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS"
+                    fitToWidth="true" fitToHeight="true"
+                    style="-fx-background-color:transparent; -fx-background:transparent;">
+
+            <VBox style="-fx-padding:28;">
+
+                <!-- ── UC01: Search Panel ── -->
+                <VBox fx:id="panelSearch" spacing="14">
+                    <Label text="Search Equipment" styleClass="section-title"/>
+                    <Label text="Search by name or category (e.g. Projector, Laptop)" styleClass="section-desc"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="searchField" promptText="Type keyword..." styleClass="input-field" prefWidth="320"/>
+                        <Button text="Search" styleClass="btn-accent" onAction="#handleSearch"/>
+                    </HBox>
+                    <TableView fx:id="searchTable" prefHeight="260" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="colEqId"       text="ID"       prefWidth="55"/>
+                            <TableColumn fx:id="colEqName"     text="Name"     prefWidth="200"/>
+                            <TableColumn fx:id="colEqCategory" text="Category" prefWidth="140"/>
+                            <TableColumn fx:id="colEqStatus"   text="Status"   prefWidth="120"/>
+                            <TableColumn fx:id="colEqLocation" text="Location" prefWidth="140"/>
+                        </columns>
+                        <placeholder><Label text="Search results appear here" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                    <Button text="📅  Book Selected Equipment" styleClass="btn-outline" onAction="#handleSelectEquipment"/>
+                </VBox>
+
+                <!-- ── UC03: Book Panel ── -->
+                <VBox fx:id="panelBook" spacing="14" visible="false" managed="false">
+                    <Label text="Book Equipment" styleClass="section-title"/>
+                    <Label text="Fill in the details to submit a booking request" styleClass="section-desc"/>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="EQUIPMENT ID" styleClass="field-label"/>
+                            <TextField fx:id="bookEqIdField" promptText="e.g. 1" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="DATE" styleClass="field-label"/>
+                            <DatePicker fx:id="bookDatePicker" styleClass="date-picker" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="START TIME (HH:MM)" styleClass="field-label"/>
+                            <TextField fx:id="bookStartField" promptText="e.g. 09:00" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="END TIME (HH:MM)" styleClass="field-label"/>
+                            <TextField fx:id="bookEndField" promptText="e.g. 11:00" styleClass="input-field"/>
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="6">
+                        <Label text="PURPOSE" styleClass="field-label"/>
+                        <TextField fx:id="bookPurposeField" promptText="e.g. Physics lecture demo" styleClass="input-field"/>
+                    </VBox>
+                    <Button text="Submit Booking Request" styleClass="btn-accent" onAction="#handleBookEquipment"/>
+                    <Label fx:id="bookStatusLabel" styleClass="section-desc"/>
+                </VBox>
+
+                <!-- ── UC05: My Bookings Panel ── -->
+                <VBox fx:id="panelBookings" spacing="14" visible="false" managed="false">
+                    <Label text="My Bookings" styleClass="section-title"/>
+                    <Label text="Track the status of all your booking requests" styleClass="section-desc"/>
+                    <TableView fx:id="bookingsTable" prefHeight="320" maxWidth="Infinity">
+                        <columns>
+                            <TableColumn fx:id="colBkId"        text="#"         prefWidth="55"/>
+                            <TableColumn fx:id="colBkEquipment" text="Equipment" prefWidth="180"/>
+                            <TableColumn fx:id="colBkDate"      text="Date"      prefWidth="110"/>
+                            <TableColumn fx:id="colBkTime"      text="Time"      prefWidth="140"/>
+                            <TableColumn fx:id="colBkStatus"    text="Status"    prefWidth="110"/>
+                            <TableColumn fx:id="colBkPurpose"   text="Purpose"   prefWidth="200"/>
+                        </columns>
+                        <placeholder><Label text="No bookings found" styleClass="section-desc"/></placeholder>
+                    </TableView>
+                </VBox>
+
+                <!-- ── UC04: Report Fault Panel ── -->
+                <VBox fx:id="panelFault" spacing="14" visible="false" managed="false">
+                    <Label text="Report Faulty Equipment" styleClass="section-title"/>
+                    <Label text="Report a fault so the lab manager can assign a repair task" styleClass="section-desc"/>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="EQUIPMENT ID" styleClass="field-label"/>
+                            <TextField fx:id="faultEqIdField" promptText="e.g. 5" styleClass="input-field"/>
+                        </VBox>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="SEVERITY" styleClass="field-label"/>
+                            <ComboBox fx:id="faultSeverityBox" styleClass="combo-box" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+                    <VBox spacing="6">
+                        <Label text="FAULT DESCRIPTION" styleClass="field-label"/>
+                        <TextArea fx:id="faultDescField" promptText="Describe the fault in detail..."
+                                  styleClass="input-area" prefHeight="100" wrapText="true"/>
+                    </VBox>
+                    <Button text="Submit Fault Report" styleClass="btn-danger" onAction="#handleReportFault"/>
+                    <Label fx:id="faultStatusLabel" styleClass="section-desc"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <!-- Status bar -->
+        <HBox styleClass="status-bar">
+            <Label fx:id="statusBar" text="Ready" styleClass="status-label"/>
+        </HBox>
+    </VBox>
+</HBox>

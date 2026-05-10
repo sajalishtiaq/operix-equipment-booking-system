@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.equipment.ui.controller.LoginController"
+           styleClass="login-root"
+           stylesheets="@../css/style.css">
+
+    <!-- Background gradient panel -->
+    <Pane styleClass="login-bg-panel" />
+
+    <!-- Center card -->
+    <VBox fx:id="loginCard" styleClass="login-card"
+          alignment="CENTER" spacing="0"
+          maxWidth="400" maxHeight="520">
+
+        <!-- Logo -->
+        <VBox alignment="CENTER" spacing="6">
+            <Label text="Operix" styleClass="login-logo"/>
+            <Label fx:id="subtitleLabel"
+                   text="Equipment Booking &amp; Fault Tracking"
+                   styleClass="login-subtitle"/>
+        </VBox>
+
+        <Pane prefHeight="32"/>
+
+        <!-- Username -->
+        <VBox spacing="6">
+            <Label text="USERNAME" styleClass="login-field-label"/>
+            <TextField fx:id="usernameField"
+                       promptText="Enter your username"
+                       styleClass="login-field"
+                       maxWidth="Infinity"/>
+        </VBox>
+
+        <Pane prefHeight="16"/>
+
+        <!-- Password -->
+        <VBox spacing="6">
+            <Label text="PASSWORD" styleClass="login-field-label"/>
+            <PasswordField fx:id="passwordField"
+                           promptText="Enter your password"
+                           styleClass="login-field"
+                           maxWidth="Infinity"/>
+        </VBox>
+
+        <Pane prefHeight="8"/>
+
+        <!-- Error -->
+        <Label fx:id="errorLabel" styleClass="error-label"
+               wrapText="true" maxWidth="Infinity"/>
+
+        <Pane prefHeight="20"/>
+
+        <!-- Login button -->
+        <Button fx:id="loginBtn" text="Sign In"
+                styleClass="btn-primary"
+                maxWidth="Infinity"
+                onAction="#handleLogin"/>
+
+        <Pane prefHeight="24"/>
+
+        <!-- Hint -->
+        <Label text="Login with your university credentials"
+               styleClass="login-subtitle" alignment="CENTER"/>
+
+    </VBox>
+</StackPane>
