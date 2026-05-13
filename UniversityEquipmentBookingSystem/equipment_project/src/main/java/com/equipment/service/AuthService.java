@@ -20,22 +20,15 @@ public class AuthService {
     }
 
     // -------------------------------------------------------
-    // LOGIN (FIXED VERSION)
+    // LOGIN 
     // -------------------------------------------------------
     public User login(String username, String password) throws SQLException {
 
         ValidationUtil.requireNonBlank(username, "Username");
         ValidationUtil.requireNonBlank(password, "Password");
 
-        // ✔ DO NOT mix hashed + plain logic
-        // Decide ONE strategy:
-
-        // OPTION 1: IF DB STORES PLAIN PASSWORDS (for your project now)
         User user = userDAO.login(username, password);
 
-        // OPTION 2 (recommended later): hashed password only
-        // String hashed = PasswordUtil.hash(password);
-        // User user = userDAO.login(username, hashed);
 
         if (user != null) {
             auditLogDAO.logAction(
@@ -62,7 +55,6 @@ public class AuthService {
         ValidationUtil.requireNonBlank(email, "Email");
         ValidationUtil.requireValidEmail(email);
 
-        // ✔ keep consistent strategy (PLAIN or HASHED — choose one)
         User user = new User(username, password, fullName, email, role);
 
         boolean created = userDAO.registerUser(user);
