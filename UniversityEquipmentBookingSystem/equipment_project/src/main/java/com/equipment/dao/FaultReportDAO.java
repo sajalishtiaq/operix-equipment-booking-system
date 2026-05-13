@@ -11,11 +11,7 @@ import java.util.List;
 
 /**
  * FaultReportDAO - Data Access Object
- * Handles DB operations for FaultReport entity.
- *
- * FIXES (SQL Server compatibility):
- *   1. NOW()   -> GETDATE()  — NOW() is MySQL only, not recognized by SQL Server
- *   2. FIELD() -> CASE WHEN  — FIELD() is MySQL only, not recognized by SQL Server
+ * Handles DB operations for FaultReport entity
  */
 public class FaultReportDAO {
 
@@ -62,8 +58,6 @@ public class FaultReportDAO {
 
     // -------------------------------------------------------
     // Lab Manager: Get all faults sorted by severity
-    // FIX: FIELD(col,'A','B','C') is MySQL-only.
-    //      SQL Server equivalent is: CASE col WHEN 'A' THEN 1 WHEN 'B' THEN 2 ... END
     // -------------------------------------------------------
     public List<FaultReport> getAllFaultsSortedBySeverity() throws SQLException {
         String sql = "SELECT fr.*, e.name AS equipment_name, u.full_name AS reporter_name " +
@@ -99,8 +93,6 @@ public class FaultReportDAO {
 
     // -------------------------------------------------------
     // Update fault status
-    // FIX: NOW() -> GETDATE()
-    //      NOW() is MySQL syntax. SQL Server uses GETDATE() for current timestamp.
     // -------------------------------------------------------
     public boolean updateFaultStatus(int faultId, Status newStatus) throws SQLException {
         String sql = newStatus == Status.RESOLVED
