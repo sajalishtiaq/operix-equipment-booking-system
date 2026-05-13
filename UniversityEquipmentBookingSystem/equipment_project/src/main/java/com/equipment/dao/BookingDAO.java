@@ -13,9 +13,7 @@ import java.util.List;
 
 /**
  * BookingDAO - FIXED VERSION
- * Works with existing schema (start_datetime + end_datetime)
- * FIX 1: mapRow() now reads teacher_name, equipment_name, manager_name
- *         so the TableView columns are not blank.
+ * Works with existing schema (start_datetime + end_datetime
  */
 public class BookingDAO {
 
@@ -192,8 +190,6 @@ public class BookingDAO {
 
     // =======================================================
     // MAP RESULTSET → OBJECT
-    // FIX: added setTeacherName, setEquipmentName, setManagerName
-    //      without these the Teacher and Equipment columns show blank
     // =======================================================
     private Booking mapRow(ResultSet rs) throws SQLException {
 
@@ -217,8 +213,6 @@ public class BookingDAO {
 
         b.setPurpose(rs.getString("purpose"));
         b.setStatus(Status.valueOf(rs.getString("status")));
-
-        // ── FIX: read joined fields so TableView columns are populated ──
         b.setTeacherName(rs.getString("teacher_name"));
         b.setEquipmentName(rs.getString("equipment_name"));
         b.setManagerName(rs.getString("manager_name"));   // NULL is fine for pending
