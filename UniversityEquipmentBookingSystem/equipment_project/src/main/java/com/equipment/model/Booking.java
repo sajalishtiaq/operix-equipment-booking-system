@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 
 /**
- * Booking - FINAL FIXED ENTITY (matches current DB schema)
+ * Booking 
  */
 public class Booking {
 
@@ -17,7 +17,6 @@ public class Booking {
     private int teacherId;
     private int equipmentId;
 
-    // ✅ MATCHES YOUR DATABASE (NOT DATETIME)
     private LocalDate bookingDate;
     private LocalTime startTime;
     private LocalTime endTime;
