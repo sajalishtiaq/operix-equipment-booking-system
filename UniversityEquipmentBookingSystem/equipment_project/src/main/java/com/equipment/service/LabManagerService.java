@@ -55,11 +55,6 @@ public class LabManagerService {
      *   1. Only PENDING bookings can be processed.
      *   2. On APPROVED: equipment remains RESERVED.
      *   3. On REJECTED: equipment status reverts to AVAILABLE.
-     *
-     * @param managerId  the logged-in lab manager's ID
-     * @param bookingId  the booking to process
-     * @param newStatus  APPROVED or REJECTED
-     * @return true if update succeeded
      */
     public boolean processBooking(int managerId, int bookingId, Booking.Status newStatus)
             throws SQLException {
@@ -142,11 +137,6 @@ public class LabManagerService {
      *   1. Equipment must exist.
      *   2. RETIRED equipment cannot be changed back to AVAILABLE directly.
      *   3. Action is logged for audit trail.
-     *
-     * @param managerId   the logged-in manager's ID
-     * @param equipmentId equipment to update
-     * @param newStatus   the desired new status
-     * @return true if update succeeded
      */
     public boolean updateEquipmentStatus(int managerId, int equipmentId, Equipment.Status newStatus)
             throws SQLException {
@@ -222,13 +212,6 @@ public class LabManagerService {
      *   2. Technician must exist and have TECHNICIAN role.
      *   3. No duplicate active tasks for the same fault.
      *   4. Fault status updated to ASSIGNED upon task creation.
-     *
-     * @param managerId    the lab manager assigning the task
-     * @param faultId      the fault to be addressed
-     * @param technicianId the technician to assign
-     * @param priority     task priority level
-     * @param notes        optional instructions for the technician
-     * @return created MaintenanceTask object
      */
     public MaintenanceTask assignMaintenanceTask(int managerId, int faultId, int technicianId,
                                                   MaintenanceTask.Priority priority, String notes)
