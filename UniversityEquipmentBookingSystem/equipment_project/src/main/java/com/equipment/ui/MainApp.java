@@ -10,16 +10,6 @@ import javafx.stage.StageStyle;
 
 /**
  * MainApp - JavaFX Application Entry Point
- *
- * HOW TO CONNECT TO BACKEND:
- * 1. Copy this entire "ui" folder into your existing project under:
- *    src/main/java/com/equipment/ui/
- * 2. Copy fxml/ and css/ folders into:
- *    src/main/resources/com/equipment/ui/
- * 3. Add JavaFX dependencies to your pom.xml (see README)
- * 4. Run MainApp instead of Main.java
- *
- * No changes needed in Service or DAO classes.
  */
 public class MainApp extends Application {
 
