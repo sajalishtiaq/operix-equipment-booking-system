@@ -12,9 +12,6 @@ import java.util.List;
 /**
  * MaintenanceTaskDAO - Data Access Object
  * Handles DB operations for MaintenanceTask entity.
- *
- * FIX (SQL Server compatibility):
- *   NOW() -> GETDATE()  — NOW() is MySQL only, not recognized by SQL Server
  */
 public class MaintenanceTaskDAO {
 
@@ -86,8 +83,6 @@ public class MaintenanceTaskDAO {
 
     // -------------------------------------------------------
     // UC02 (Technician): Update Repair Status
-    // FIX: NOW() -> GETDATE()
-    //      NOW() is MySQL syntax. SQL Server uses GETDATE() for current timestamp.
     // -------------------------------------------------------
     public boolean updateTaskStatus(int taskId, Status newStatus) throws SQLException {
         String sql = newStatus == Status.COMPLETED
