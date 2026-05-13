@@ -14,24 +14,6 @@ import java.util.List;
 
 /**
  * FaultService - Business Logic Layer
- *
- * BUGS FIXED in updateRepairStatus():
- *
- * BUG 1 (Logical - your reported issue):
- *   When newStatus == COMPLETED, fault_reports.status was never updated to RESOLVED.
- *   The manager's query (WHERE status != 'RESOLVED') kept returning it as unresolved.
- *   FIX: Added else-if block for COMPLETED that calls updateFaultStatus(RESOLVED)
- *        and restores equipment to AVAILABLE.
- *
- * BUG 2 (Wrong ID for equipment update on IN_PROGRESS):
- *   equipmentDAO.updateStatus(task.getFaultId(), ...) passed the FAULT ID
- *   as the equipment ID. e.g. fault #3 was being used to update equipment row #3
- *   instead of the actual equipment the fault was reported on.
- *   FIX: Fetch the FaultReport first, then use fault.getEquipmentId().
- *
- * BUG 3 (Wrong ID for fault status update on IN_PROGRESS):
- *   faultReportDAO.updateFaultStatus(task.getFaultId(), ...) — this was
- *   accidentally correct (fault ID is right here), but kept for clarity.
  */
 public class FaultService {
 
@@ -86,8 +68,8 @@ public class FaultService {
     //
     // State machine:
     //   PENDING     → IN_PROGRESS : marks fault IN_PROGRESS, equipment UNDER_REPAIR
-    //   IN_PROGRESS → COMPLETED   : marks fault RESOLVED,    equipment AVAILABLE   ← BUG 1 FIX
-    //   PENDING     → COMPLETED   : same as above (direct resolve)                 ← BUG 1 FIX
+    //   IN_PROGRESS → COMPLETED   : marks fault RESOLVED,    equipment AVAILABLE  
+    //   PENDING     → COMPLETED   : same as above (direct resolve)                
     // -------------------------------------------------------
     public boolean updateRepairStatus(int technicianId, int taskId,
                                       MaintenanceTask.Status newStatus, String notes)
@@ -124,10 +106,6 @@ public class FaultService {
 
         if (updated) {
 
-            // ── BUG 2 FIX: fetch the fault to get the REAL equipment ID ──
-            // task.getFaultId() is a fault ID (e.g. 3), NOT an equipment ID.
-            // Passing it directly to equipmentDAO.updateStatus() updated the
-            // wrong equipment row. We must look up the fault first.
             FaultReport fault = faultReportDAO.getFaultById(task.getFaultId());
 
             if (newStatus == MaintenanceTask.Status.IN_PROGRESS) {
@@ -139,9 +117,7 @@ public class FaultService {
                 }
 
             } else if (newStatus == MaintenanceTask.Status.COMPLETED) {
-                // ── BUG 1 FIX: COMPLETED must mark fault as RESOLVED ──
-                // Without this block, fault_reports.status stayed IN_PROGRESS/ASSIGNED
-                // and the manager's dashboard kept showing it as unresolved.
+               
                 faultReportDAO.updateFaultStatus(task.getFaultId(), FaultReport.Status.RESOLVED);
                 // Restore equipment to AVAILABLE using the CORRECT equipment ID
                 if (fault != null) {
