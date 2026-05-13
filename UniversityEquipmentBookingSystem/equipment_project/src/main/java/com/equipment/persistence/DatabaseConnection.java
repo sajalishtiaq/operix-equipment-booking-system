@@ -24,7 +24,6 @@ public class DatabaseConnection {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
-            // ✔ CORRECT WAY (credentials passed here ONLY)
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
 
             System.out.println("[DB] Connected successfully to " + SERVER);
